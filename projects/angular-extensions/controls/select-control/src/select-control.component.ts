@@ -414,10 +414,17 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
             }
 
             let selectedIds = this.selection.selected.map(value => this.field.optionId(value));
+            let selectedValues = this.selection.selected.map(value => this.field.optionValue(value));
 
-            let matchedOptions = this.select.options.filter(option =>
-              (option.value && selectedIds.includes(this.field.optionId(option.value))) ||
-              this.selection.selected.includes(option.value));
+            let matchedOptions = this.select.options.filter(option => {
+              if (option.value === undefined) {
+                return false;
+              }
+
+              return typeof option.value == "string" || typeof option.value == "number"
+                ? selectedValues.includes(option.value as unknown as TControlValue)
+                : selectedIds.includes(this.field.optionId(option.value)) || this.selection.selected.includes(option.value);
+            });
 
             select._selectionModel.setSelection(...matchedOptions);
 
