@@ -11,6 +11,7 @@ import { NgxBaseControlModule } from "angular-extensions/controls/base-control";
 import { SelectControlComponent } from "./select-control.component";
 import { CustomMatOptionDirective } from "./custom-mat-option.directive";
 import { MatSelectSearchComponentDirective } from "./ngx-mat-select-search.directive";
+import { MatPseudoCheckboxModule } from "@angular/material/core";
 
 interface AppSelectionModel<T> extends Omit<SelectionModel<T>, "_markSelected" | "_unmarkSelected"> {
   _markSelected(value: T): void;
@@ -49,6 +50,7 @@ patchSelectionModel();
   imports: [
     CommonModule,
     MatSelectModule,
+    MatPseudoCheckboxModule,
     MatProgressSpinnerModule,
     ScrollingModule,
     NgxMatSelectSearchModule,

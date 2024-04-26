@@ -1,5 +1,5 @@
 import { of } from "rxjs";
-import { delay } from "rxjs/operators";
+import { delay, map } from "rxjs/operators";
 import { Injectable } from "@angular/core";
 import { ApiService, BaseEditor, DayOfWeek, Field, Formatters, Option, TimeOfDay } from "angular-extensions";
 
@@ -205,6 +205,7 @@ export class DashboardEditor extends BaseEditor {
       },
       optionId: country => country.cca3,
       optionLabel: country => country.name.common,
+      optionsGroupProvider: country => `${country.name.common[0]} - list`,
       options: this.loadAllCountries(),
       value: [],
       onValueChange: allies => {
@@ -264,6 +265,6 @@ export class DashboardEditor extends BaseEditor {
   }
 
   private loadAllCountries() {
-    return this.api.get<Country[]>(`https://restcountries.com/v3.1/all`);
+    return this.api.get<Country[]>(`https://restcountries.com/v3.1/all`).pipe(map(countries => countries.orderBy(x => x.name.common)));
   }
 }

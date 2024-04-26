@@ -5,7 +5,7 @@ import {
   Component, OnInit, OnChanges, Input, Optional, ElementRef, ChangeDetectorRef, NgZone,
   ViewChild, ContentChild, TemplateRef, ChangeDetectionStrategy, Output, EventEmitter, ViewEncapsulation,
 } from "@angular/core";
-import { AppMatOption } from "@angular/material/core";
+import { AppMatOption, MatOptgroup, MatPseudoCheckboxState } from "@angular/material/core";
 import { AppMatSelect, MatSelect } from "@angular/material/select";
 import { FormControl } from "@angular/forms";
 import { MatMenuTrigger } from "@angular/material/menu";
@@ -15,6 +15,10 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { Field } from "angular-extensions/models";
 import { overrideFunction, SimpleChanges } from "angular-extensions/core";
 import { ActionableControl, ControlBase } from "angular-extensions/controls/base-control";
+
+interface SelectionGroup<TKey, T> extends Group<TKey, T> {
+  state?: MatPseudoCheckboxState;
+}
 
 @Component({
   selector: "select-control",
@@ -104,11 +108,7 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
    */
   public selectedOption: TOption | TOption[];
 
-  public get filteredOptions() {
-    return this.field.options.filter(option =>
-      !this.field.optionDisabled(option) &&
-      this.field.optionsFilterPredicate(option, this.filterControl.value));
-  }
+  public groupStates = new Map<TOptionGroup, SelectionGroup<TOptionGroup, TOption>>();
 
   /**
    * Trigger label (text shown when option(s) selected),
@@ -152,8 +152,8 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
     this.addOptionsFilteringSupport();
     this.updateOptionsAndViewportOnMenuOpen();
 
-    if (this.multiple && this.searchable) {
-      this.updateSelectAllStateOnOptionChanges();
+    if (this.multiple && (this.searchable || this.field.optionsGroupProvider)) {
+      this.updateSelectStatesOnOptionChanges();
     }
   }
 
@@ -163,8 +163,17 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
     }
   }
 
+  public optionGroupTracker = (index: number, optionGroup: Group<TOptionGroup, TOption>) => {
+    return optionGroup.key;
+  };
+
   public optionTracker = (index: number, option: TOption) => {
     return this.field.optionId(option, index);
+  };
+
+  public optionFilter = (option: TOption) => {
+    return !this.field.optionDisabled(option) &&
+      this.field.optionsFilterPredicate(option, this.filterControl.value);
   };
 
   public optionComparer = (left?: TOption, right?: TOption) => {
@@ -191,7 +200,7 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
   }
 
   public toggleSelectAll(shouldSelect: boolean) {
-    let filteredOptions = this.filteredOptions;
+    let filteredOptions = this.field.options.filter(this.optionFilter);
 
     let matOptions = this.select.options.filter(option => !option.disabled);
 
@@ -208,6 +217,30 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
     else {
       this.selection.deselect(...filteredOptions);
       this.select._selectionModel.deselect(...matOptions);
+    }
+
+    this.select._propagateChanges();
+
+    this.changeDetectorRef.markForCheck();
+  }
+
+  public toggleOptionGroup(group: SelectionGroup<TOptionGroup, TOption>, optionGroup: MatOptgroup) {
+    let shouldSelect = group.state != "checked";
+
+    let mapOptions = this.select.options.filter(option =>
+        !option.disabled &&
+        option.group == optionGroup &&
+        this.optionFilter(option.value));
+
+    let groupOptions = group.items.filter(this.optionFilter);
+
+    if (shouldSelect) {
+      this.selection.select(...groupOptions);
+      this.select._selectionModel.select(...mapOptions);
+    }
+    else {
+      this.selection.deselect(...groupOptions);
+      this.select._selectionModel.deselect(...mapOptions);
     }
 
     this.select._propagateChanges();
@@ -271,6 +304,10 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
 
         this.selection.clear();
         this.selection.select(...options);
+
+        if (this.field.optionsGroupProvider) {
+          this.groupStates = new Map(this.field.options.groupBy(this.field.optionsGroupProvider).map(group => [group.key, group]));
+        }
 
         // synchronize with select model
         this.select._initializeSelection();
@@ -342,31 +379,55 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
   }
 
   /**
-   * Updates select all state on selection changes.
+   * Updates "select all" or "group" states on selection changes.
    */
-  private updateSelectAllStateOnOptionChanges() {
+  private updateSelectStatesOnOptionChanges() {
     merge(this.selection.changed, this.filterControl.valueChanges)
       .pipe(
         debounceTime(0),
-        startWith(this.isSelectAllChecked),
+        startWith(undefined),
         takeUntil(this.destroy$))
       .subscribe(() => {
-        let selectedOptions = this.selection.selected.filter(option =>
-          !this.field.optionDisabled(option) &&
-          this.field.optionsFilterPredicate(option, this.filterControl.value));
+        let selectedOptions = this.selection.selected.filter(this.optionFilter);
 
-        if (!selectedOptions.length) {
-          this.isSelectAllChecked = false;
+        if (this.searchable) {
+          if (!selectedOptions.length) {
+            this.isSelectAllChecked = false;
+          }
+          else {
+            let uncheckedOption = this.field.options
+              .some(option => this.optionFilter(option) && !selectedOptions.some(selected => this.optionComparer(option, selected)));
+
+            this.isSelectAllChecked = uncheckedOption ? null : true;
+          }
         }
-        else {
-          let uncheckedOption = this.filteredOptions
-            .some(option => !selectedOptions.some(selected => this.optionComparer(option, selected)));
 
-          this.isSelectAllChecked = uncheckedOption ? null : true;
+        if (this.field.optionsGroupProvider) {
+          let selectedGroups = selectedOptions.groupBy(this.field.optionsGroupProvider);
+
+          this.groupStates.forEach(groupState => {
+            groupState.state = getSelectionState(selectedGroups.find(x => x.key == groupState.key)?.items ?? [], groupState.items);
+          });
         }
 
         this.changeDetectorRef.markForCheck();
       });
+
+      function getSelectionState(selected: TOption[], options: TOption[]): MatPseudoCheckboxState {
+        if (!options.length) {
+          return "unchecked";
+        }
+
+        if (selected.length == 0) {
+          return "unchecked";
+        }
+        else if (selected.length == options.length) {
+          return "checked";
+        }
+        else {
+          return "indeterminate";
+        }
+      }
   }
 
   /**

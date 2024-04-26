@@ -10,6 +10,14 @@ select-control {
   }
 }
 
+.mat-optgroup-label {
+  position: sticky;
+  top: inherit;
+  z-index: 1020;
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
 mat-checkbox + .mat-select-search-input,
 mat-icon + .mat-select-search-input {
   padding-left: 8px !important;

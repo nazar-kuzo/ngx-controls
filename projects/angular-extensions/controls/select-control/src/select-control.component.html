@@ -45,8 +45,17 @@
       <ng-container *ngIf="field.options | filter : field.optionsFilterPredicate : filterControl.value as options">
         <ng-container *ngIf="options.length; else noItemsTemplate">
           <ng-container *ngIf="field.optionsGroupProvider">
-            <mat-optgroup *ngFor="let group of options | groupBy : field.optionsGroupProvider"
-                          [label]="group.key | map : field.optionGroupLabel">
+            <mat-optgroup #optionGroup
+                          *ngFor="let group of options | groupBy : field.optionsGroupProvider; trackBy : optionGroupTracker"
+                          [style.top]="searchable ? optionHeight + 'px' : '0px'"
+                          [label]="multiple ? '' : group.key | map : field.optionGroupLabel">
+              <span *ngIf="multiple && groupStates.get(group.key) as group">
+                <mat-pseudo-checkbox class="mat-option-pseudo-checkbox"
+                                     [state]="group.state"
+                                     (click)="toggleOptionGroup(group, optionGroup)"></mat-pseudo-checkbox>
+                {{ group.key | map : field.optionGroupLabel }}
+              </span>
+
               <mat-option *ngFor="let option of group.items; trackBy : optionTracker"
                           [matTooltipDisabled]="optionTooltipDisabled"
                           [matTooltip]="option | map : field.optionLabel"
