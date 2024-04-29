@@ -7,4 +7,5 @@
   "html.format.wrapAttributes": "force-aligned",
   "javascript.preferences.quoteStyle": "double",
   "typescript.preferences.quoteStyle": "double",
+  "typescript.tsdk": "node_modules\\typescript\\lib",
 }
