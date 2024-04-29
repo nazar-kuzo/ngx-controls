@@ -309,16 +309,28 @@ export function getDayOfWeek(this: Date) {
     : dayOfWeek - 1;
 }
 
-export function trim(this: String, charlist = "\s") {
-  return this?.replace(new RegExp("^[" + charlist + "]+|[" + charlist + "]+$"), "");
+const originalTrim = String.prototype.trim;
+
+export function trim(this: string, charlist?: string) {
+  return charlist
+    ? this?.replace(new RegExp("^[" + charlist + "]+|[" + charlist + "]+$"), "")
+    : originalTrim.call(this);
 }
 
-export function trimStart(this: String, charlist = "\s") {
-  return this?.replace(new RegExp("^[" + charlist + "]+"), "");
+const originalTrimStart = String.prototype.trimStart;
+
+export function trimStart(this: string, charlist?: string) {
+  return charlist
+    ? this?.replace(new RegExp("^[" + charlist + "]+"), "")
+    : originalTrimStart.call(this);
 }
 
-export function trimEnd(this: String, charlist = "\s") {
-  return this?.replace(new RegExp("[" + charlist + "]+$"), "");
+const originalTrimEnd = String.prototype.trimEnd;
+
+export function trimEnd(this: string, charlist?: string) {
+  return charlist
+    ? this?.replace(new RegExp("[" + charlist + "]+$"), "")
+    : originalTrimEnd.call(this);
 }
 
 export function handleError(action: () => any) {
