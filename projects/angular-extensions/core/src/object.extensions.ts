@@ -1,6 +1,28 @@
 import { format, parseISO } from "date-fns";
 import { reduce, upperFirst, words } from "lodash-es";
 
+export interface StartCaseOptions {
+  /**
+   * Should insert a space before digit present in string. E.g. "every10Month" => "Every 10 Month"
+   */
+  insertSpaceBeforeDigits?: boolean;
+
+  /**
+   * Should insert a space after digit present in string. E.g. "calculate10e" => "Calculate 10 e"
+   */
+  insertSpaceAfterDigits?: boolean;
+
+  /**
+   * Should insert a space before abbreviation present in string. E.g. "FaceID" => "Face ID"
+   */
+  insertSpaceBeforeAbbreviations?: boolean;
+
+  /**
+   * Should make single letter part present in string. E.g. "pH" => "PH"
+   */
+  capitalizeSingleLetters?: boolean;
+}
+
 declare global {
   interface StartCaseOptions {
     /**
@@ -25,6 +47,8 @@ declare global {
   }
 
   interface String {
+    trim(this: string, charList?: string): string;
+    trimStart(this: string, charList?: string): string;
     trimEnd(this: string, charList?: string): string;
     toStartCase(this: string, options?: StartCaseOptions): string;
   }
@@ -285,6 +309,14 @@ export function getDayOfWeek(this: Date) {
     : dayOfWeek - 1;
 }
 
+export function trim(this: String, charlist = "\s") {
+  return this?.replace(new RegExp("^[" + charlist + "]+|[" + charlist + "]+$"), "");
+}
+
+export function trimStart(this: String, charlist = "\s") {
+  return this?.replace(new RegExp("^[" + charlist + "]+"), "");
+}
+
 export function trimEnd(this: String, charlist = "\s") {
   return this?.replace(new RegExp("[" + charlist + "]+$"), "");
 }
@@ -356,6 +388,8 @@ Date.prototype.toUtcDate = toUtcDate;
 Date.prototype.asLocalDate = asLocalDate;
 FormData.prototype.fromObject = formDataFromObject;
 
+Object.defineProperty(String.prototype, nameOf(() => String.prototype.trim), { value: trim, configurable: true, writable: true });
+Object.defineProperty(String.prototype, nameOf(() => String.prototype.trimStart), { value: trimStart, configurable: true, writable: true });
 Object.defineProperty(String.prototype, nameOf(() => String.prototype.trimEnd), { value: trimEnd, configurable: true, writable: true });
 
 Object.defineProperty(

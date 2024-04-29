@@ -2,7 +2,7 @@ import { Directive, Input, OnInit } from "@angular/core";
 import { MatDatepickerInput } from "@angular/material/datepicker";
 
 import { MatDateFormats } from "@angular/material/core";
-import { AppMatDatepickerInput } from "angular-extensions/models";
+import type { AppMatDatepickerInput } from "angular-extensions/models";
 
 /**
  * Forces date/time format in text input view

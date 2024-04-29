@@ -3,9 +3,9 @@ import { Observable, of, Subject } from "rxjs";
 import { catchError, filter as filterPredicate, first, map, pairwise, startWith, takeUntil } from "rxjs/operators";
 import { FormControl, FormGroup } from "@angular/forms";
 
-import { handleError } from "angular-extensions/core";
-import { DatePipe, DateTimePipe, StartCasePipe } from "angular-extensions/pipes";
-import { Validation, ValueProvider, ValidationConstructor } from "./validation.model";
+import { handleError, toStartCase, type StartCaseOptions } from "angular-extensions/core";
+import { DatePipe, DateTimePipe } from "angular-extensions/pipes";
+import { Validation, ValidationConstructor } from "./validation.model";
 import { NGX_DATE_FORMATS } from "./datetime-configuration.model";
 
 /**
@@ -105,8 +105,6 @@ interface FormatterOptions {
  */
 export class Option<TValue, TId = string> {
 
-  private static startCasePipe = new StartCasePipe();
-
   public id: TId;
 
   public name: string;
@@ -131,12 +129,12 @@ export class Option<TValue, TId = string> {
    * Creates options from specified Enum
    *
    * @param enumType Enum type
-   * @param insertSpaceBeforeDigits Should insert a space before digit present in string. E.g. "every10Month" => "Every 10 Month"
+   * @param options Label formatter options
    * @returns Collection of options
    */
   public static ForEnum<TEnum extends number | string>(
     enumType: any,
-    options: FormatterOptions = { insertSpaceBeforeDigits: false, insertSpaceBeforeAbbreviations: false }): Option<TEnum>[] {
+    options: StartCaseOptions = {}): Option<TEnum>[] {
     let entries = Object.entries(enumType) as [string, string | number][];;
 
     let numberEntries = entries.filter(([, value]) => typeof value == "number") as [string, number][];
@@ -144,7 +142,7 @@ export class Option<TValue, TId = string> {
     return (numberEntries.length > 0 ? numberEntries : entries)
       .map(([key, value]: [string, string | number]) => {
         return Object.assign(new Option<TEnum>({
-          label: this.startCasePipe.transform(key, options.insertSpaceBeforeDigits, options.insertSpaceBeforeAbbreviations),
+          label: toStartCase.call(key ?? "", options),
           name: key,
           value: value as TEnum,
         }));
