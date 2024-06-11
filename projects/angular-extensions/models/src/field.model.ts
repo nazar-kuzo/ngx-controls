@@ -219,7 +219,7 @@ export class Field<TValue, TOption = TValue, TOptionGroup = any, TFormattedValue
   /**
    * Highlights field
    */
-  public highlight?: () => void;
+  public highlight?: (value?: any) => void;
 
   /**
    * Determines whether field is querying data: options, etc.
