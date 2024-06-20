@@ -358,7 +358,6 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
           if (this.virtualization) {
             this.ngZone.onStable.pipe(first()).subscribe(() => {
               if (this.scrollViewport) {
-                this.select.panel.nativeElement.style.height = `${this.dropdownHeight}px`;
                 this.select.panel.nativeElement.style.maxHeight = `${this.dropdownHeight}px`;
 
                 this.scrollViewport.checkViewportSize();

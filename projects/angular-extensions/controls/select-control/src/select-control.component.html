@@ -10,7 +10,7 @@
       <ng-container *ngTemplateOutlet="baseControl.hintTemplate"></ng-container>
     </mat-hint>
 
-    <mat-select [panelClass]="'custom-scroll ' + dropdownClass"
+    <mat-select [panelClass]="'custom-scroll select-control-panel' + dropdownClass"
                 [ngClass]="{ loading: field.isQuerying }"
                 [matTooltipDisabled]="tooltipDisabled"
                 [matTooltip]="triggerLabel"
@@ -70,7 +70,8 @@
           <ng-container *ngIf="!field.optionsGroupProvider">
             <ng-container *ngIf="virtualization">
               <cdk-virtual-scroll-viewport [itemSize]="optionHeight"
-                                           [style.height.px]="viewportHeight">
+                                           [style.height.px]="viewportHeight"
+                                           [class.virtualization-disabled]="options.length * optionHeight < viewportHeight">
                 <mat-option *cdkVirtualFor="let option of options; trackBy : optionTracker"
                             [style.height.px]="optionHeight"
                             [value]="option | map : field.optionValue"

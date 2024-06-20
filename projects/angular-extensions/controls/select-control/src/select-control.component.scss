@@ -22,3 +22,23 @@ mat-checkbox + .mat-select-search-input,
 mat-icon + .mat-select-search-input {
   padding-left: 8px !important;
 }
+
+.select-control-panel {
+  .cdk-virtual-scroll-viewport {
+    & > .cdk-virtual-scroll-content-wrapper {
+      max-width: 100%;
+    }
+
+    &.virtualization-disabled {
+      display: contents;
+
+      & > .cdk-virtual-scroll-content-wrapper {
+        position: static;
+      }
+
+      & > .cdk-virtual-scroll-spacer {
+        display: none;
+      }
+    }
+  }
+}
