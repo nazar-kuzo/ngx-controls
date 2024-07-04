@@ -79,6 +79,9 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
   @Output()
   public actionButton = new EventEmitter<Field<TValue, TOption, TOptionGroup, TFormattedValue, TControlValue>>();
 
+  @Output()
+  public menuClosed = new EventEmitter<void>();
+
   @ViewChild(MatSelect, { static: true })
   public select: AppMatSelect;
 
@@ -154,6 +157,12 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
 
     if (this.multiple && (this.searchable || this.field.optionsGroupProvider)) {
       this.updateSelectStatesOnOptionChanges();
+    }
+
+    if (this.menuClosed.observed) {
+      this.select._closedStream
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => this.menuClosed.emit());
     }
   }
 
