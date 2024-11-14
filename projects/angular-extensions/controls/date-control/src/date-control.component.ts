@@ -1,14 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ComponentRef, ElementRef, Inject, Input, OnChanges, ViewChild,
+  ComponentRef, ElementRef, EventEmitter, Inject, Input, OnChanges, Output, ViewChild,
 } from "@angular/core";
 import { MatCalendarHeader, MatCalendarView, MatDatepicker, MatDatepickerContent } from "@angular/material/datepicker";
 import { MatDateFormats, MAT_DATE_FORMATS } from "@angular/material/core";
 import type { CdkPortalOutlet } from "@angular/cdk/portal";
 
 import { overrideFunction, SimpleChanges } from "angular-extensions/core";
-import { ControlBase } from "angular-extensions/controls/base-control";
-import { AppMatDatepicker } from "angular-extensions/models";
+import { ControlBase, ActionableControl } from "angular-extensions/controls/base-control";
+import { AppMatDatepicker, Field } from "angular-extensions/models";
 
 @Component({
   selector: "date-control",
@@ -18,7 +18,7 @@ import { AppMatDatepicker } from "angular-extensions/models";
 })
 export class DateControlComponent<TOption, TOptionGroup, TFormattedValue, TControlValue>
   extends ControlBase<Date, TOption, TOptionGroup, TFormattedValue, TControlValue>
-  implements OnChanges {
+  implements ActionableControl, OnChanges {
 
   @Input()
   public targetView: "year" | "month" | "day" = "day";
@@ -31,6 +31,18 @@ export class DateControlComponent<TOption, TOptionGroup, TFormattedValue, TContr
 
   @Input()
   public clearable: boolean;
+
+  @Input()
+  public actionButtonVisible = true;
+
+  @Input()
+  public actionButtonIcon?: string;
+
+  @Input()
+  public actionButtonTooltip?: string;
+
+  @Output()
+  public actionButton = new EventEmitter<Field<Date, TOption, TOptionGroup, TFormattedValue, TControlValue>>();
 
   @ViewChild(MatDatepicker, { static: true })
   public datePicker: AppMatDatepicker<Date>;

@@ -1,15 +1,15 @@
 import { switchMap } from "rxjs/operators";
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
-  ElementRef, Inject, Input, OnInit, ViewChild, ViewEncapsulation,
+  ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild, ViewEncapsulation,
 } from "@angular/core";
 import { MatDateFormats, MAT_DATE_FORMATS } from "@angular/material/core";
 import { MatDatepicker, MatDatepickerContent } from "@angular/material/datepicker";
 import { NgxMatTimepickerComponent } from "@angular-material-components/datetime-picker";
 
 import { overrideFunction } from "angular-extensions/core";
-import { AppMatDatepicker, AppNgxMatTimepickerComponent } from "angular-extensions/models";
-import { ControlBase } from "angular-extensions/controls/base-control";
+import { AppMatDatepicker, AppNgxMatTimepickerComponent, Field } from "angular-extensions/models";
+import { ControlBase, ActionableControl } from "angular-extensions/controls/base-control";
 
 function addTimepickerNullableModelSupport() {
   // disable dead-loop of model => view and view <= model change events
@@ -75,7 +75,7 @@ addTimepickerNullableModelSupport();
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DateTimeControlComponent extends ControlBase<Date> implements OnInit {
+export class DateTimeControlComponent extends ControlBase<Date> implements ActionableControl, OnInit {
 
   @Input()
   public initialTime: number[];
@@ -91,6 +91,18 @@ export class DateTimeControlComponent extends ControlBase<Date> implements OnIni
 
   @Input()
   public format: string;
+
+  @Input()
+  public actionButtonVisible = true;
+
+  @Input()
+  public actionButtonIcon?: string;
+
+  @Input()
+  public actionButtonTooltip?: string;
+
+  @Output()
+  public actionButton = new EventEmitter<Field<Date>>();
 
   @ViewChild(MatDatepicker, { static: true })
   public datePicker: AppMatDatepicker<Date>;

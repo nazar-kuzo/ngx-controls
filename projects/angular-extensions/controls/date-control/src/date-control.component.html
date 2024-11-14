@@ -18,14 +18,24 @@
            [formControl]="field.control"
            [matDatepicker]="datePicker">
 
-    <mat-datepicker-toggle matSuffix
-                           [for]="datePicker">
-      <mat-icon matDatepickerToggleIcon
-                [matTooltip]="clearable && field.control.enabled && field.value != null ? 'Clear' : ''"
-                (click)="onToggle($event)">
-        {{ clearable && field.control.enabled && field.value != null ? 'close' : 'today' }}
-      </mat-icon>
-    </mat-datepicker-toggle>
+    <a *ngIf="actionButtonVisible && actionButtonIcon && actionButton.observers.length; else toggleTemplate"
+       mat-icon-button
+       matSuffix
+       [matTooltip]="actionButtonTooltip"
+       (click)="actionButton.emit(field); $event.preventDefault(); $event.stopImmediatePropagation();">
+      <mat-icon>{{ actionButtonIcon }}</mat-icon>
+    </a>
+
+    <ng-template #toggleTemplate>
+      <mat-datepicker-toggle matSuffix
+                             [for]="datePicker">
+        <mat-icon matDatepickerToggleIcon
+                  [matTooltip]="clearable && field.control.enabled && field.value != null ? 'Clear' : ''"
+                  (click)="onToggle($event)">
+          {{ clearable && field.control.enabled && field.value != null ? 'close' : 'today' }}
+        </mat-icon>
+      </mat-datepicker-toggle>
+    </ng-template>
 
     <mat-datepicker #datePicker
                     [restoreFocus]="false"
