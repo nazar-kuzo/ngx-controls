@@ -1,7 +1,9 @@
-import { Directive, Input, AfterViewInit, OnChanges } from "@angular/core";
+import { Directive, Input, AfterViewInit, OnChanges, ElementRef } from "@angular/core";
+import { MatSelect } from "@angular/material/select";
 import { MatSelectSearchComponent } from "ngx-mat-select-search";
 
-import { SimpleChanges } from "angular-extensions/core";
+import { overrideFunction, SimpleChanges } from "angular-extensions/core";
+import { filter, first } from "rxjs";
 
 @Directive({
   selector: "ngx-mat-select-search"
@@ -24,8 +26,29 @@ export class MatSelectSearchComponentDirective implements AfterViewInit, OnChang
   public toggleAllCheckboxDisabled: boolean;
 
   constructor(
+    matSelect: MatSelect,
+    elementRef: ElementRef<HTMLElement>,
     private selectSearchComponent: MatSelectSearchComponent,
   ) {
+    fixSearchWidthCalculation();
+
+    /**
+     * Select search has position absolute and re-calculates width when opened which causes flicker
+     */
+    function fixSearchWidthCalculation() {
+      matSelect.openedChange
+        .pipe(filter(opened => opened), first())
+        .subscribe(() => elementRef.nativeElement.classList.toggle("position-relative", true));
+
+      overrideFunction(
+        selectSearchComponent,
+        searchComponent => searchComponent.updateInputWidth,
+        updateInputWidth => {
+          updateInputWidth();
+
+          elementRef.nativeElement.classList.toggle("position-relative", false);
+        });
+    }
   }
 
   public ngAfterViewInit(): void {

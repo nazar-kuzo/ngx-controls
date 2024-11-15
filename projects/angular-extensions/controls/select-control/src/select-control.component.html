@@ -24,7 +24,8 @@
       </mat-select-trigger>
 
       <mat-option *ngIf="searchable">
-        <ngx-mat-select-search [showToggleAllCheckbox]="multiple"
+        <ngx-mat-select-search class="d-block"
+                               [showToggleAllCheckbox]="multiple"
                                [toggleAllCheckboxIndeterminate]="isSelectAllChecked == null"
                                [toggleAllCheckboxChecked]="isSelectAllChecked"
                                [toggleAllCheckboxDisabled]="multiple && !(field.options | filter : field.optionsFilterPredicate : filterControl.value).length"
