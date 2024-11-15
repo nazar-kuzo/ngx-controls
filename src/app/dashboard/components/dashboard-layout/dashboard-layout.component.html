@@ -88,7 +88,15 @@
                     [multiple]="true"
                     [searchable]="true"
                     [clearable]="true"
-                    [virtualization]="true"></select-control>
+                    [virtualization]="true">
+      <ng-template #searchActionTemplate>
+        <a mat-icon-button
+           matSuffix
+           tooltip="Search by list of IDs">
+          <mat-icon class="mb-0 ml-1">edit_note</mat-icon>
+        </a>
+      </ng-template>
+    </select-control>
 
     <textarea-control class="col-sm-4 d-block"
                       [field]="editor.anthem"></textarea-control>

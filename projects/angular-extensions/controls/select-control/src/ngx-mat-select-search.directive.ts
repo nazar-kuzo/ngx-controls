@@ -8,14 +8,16 @@ import { SimpleChanges } from "angular-extensions/core";
 })
 export class MatSelectSearchComponentDirective implements AfterViewInit, OnChanges {
 
+  private get innerSearchElement() {
+    return this.selectSearchComponent.innerSelectSearch.nativeElement as HTMLElement;
+  }
+
   private get checkbox() {
-    return (this.selectSearchComponent.innerSelectSearch.nativeElement as HTMLElement)
-      .querySelector("mat-checkbox") as HTMLElement;
+    return this.innerSearchElement.querySelector("mat-checkbox") as HTMLElement;
   }
 
   private get searchIcon() {
-    return (this.selectSearchComponent.innerSelectSearch.nativeElement as HTMLElement)
-      .querySelector("mat-icon") as HTMLElement;
+    return this.innerSearchElement.querySelector("mat-icon") as HTMLElement;
   }
 
   @Input()

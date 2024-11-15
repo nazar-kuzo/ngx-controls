@@ -35,7 +35,13 @@
                                [noEntriesFoundLabel]="null"
                                [formControl]="filterControl"
                                [searching]="field.isQuerying"
-                               (toggleAll)="toggleSelectAll($event)"></ngx-mat-select-search>
+                               (toggleAll)="toggleSelectAll($event)">
+          <div *ngIf="searchActionTemplate"
+               [hidden]="filterControl.value"
+               class="mat-select-search-custom-header-content">
+            <ng-container *ngTemplateOutlet="searchActionTemplate"></ng-container>
+          </div>
+        </ngx-mat-select-search>
       </mat-option>
 
       <ng-container *ngIf="headerTemplate">

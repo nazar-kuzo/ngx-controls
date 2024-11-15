@@ -97,6 +97,9 @@ export class SelectControlComponent<TValue, TOption, TOptionGroup, TFormattedVal
   @ContentChild("triggerTemplate", { static: true })
   public triggerTemplate: TemplateRef<{ $implicit: string; option: TOption | TOption[] }>;
 
+  @ContentChild("searchActionTemplate", { static: true })
+  public searchActionTemplate: TemplateRef<any>;
+
   public dropdownHeight = this.optionHeight * this.visibleOptionsCount;
 
   public isSelectAllChecked = false;
