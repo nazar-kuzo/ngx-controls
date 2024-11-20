@@ -456,34 +456,40 @@ export class Field<TValue, TOption = TValue, TOptionGroup = any, TFormattedValue
   /**
    * Sets Field's options. Subscribes to Observable input and tracks status in {@link isQuerying} property
    */
-  public setOptions(value: TOption[] | Observable<TOption[]>) {
-    if (value instanceof Observable) {
-      this.isQuerying = true;
+  public setOptions(value: TOption[] | Observable<TOption[]>): Promise<void> {
+    return new Promise(resolve => {
+      if (value instanceof Observable) {
+        this.isQuerying = true;
 
-      // emit control status change event to trigger change detection by controls
-      this.control.markAsPending({ onlySelf: true });
+        // emit control status change event to trigger change detection by controls
+        this.control.markAsPending({ onlySelf: true });
 
-      value
-        .pipe(
-          first(),
-          catchError(error => {
-            console.error(error);
+        value
+          .pipe(
+            first(),
+            catchError(error => {
+              console.error(error);
 
-            return of([]);
-          }))
-        .subscribe({
-          next: options => {
-            this.options = options;
-            this.isQuerying = false;
+              return of([]);
+            }))
+          .subscribe({
+            next: options => {
+              this.options = options;
+              this.isQuerying = false;
 
-            // opposite action to "control.markAsPending"
-            this.control.setErrors(this.control.errors);
-          }
-        });
-    }
-    else {
-      this.options = value;
-    }
+              // opposite action to "control.markAsPending"
+              this.control.setErrors(this.control.errors);
+
+              resolve();
+            }
+          });
+      }
+      else {
+        this.options = value;
+
+        resolve();
+      }
+    });
   }
 
   /**
