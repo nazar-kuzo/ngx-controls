@@ -4,6 +4,10 @@ import { CustomPaginatorDirective } from "./custom-paginator.directive";
 import { FormatDirective } from "./format.directive";
 import { MatEnhancedTooltipDirective } from "./mat-enhanced-tooltip.directive";
 import { PreventClickOnSelectionDirective } from "./prevent-click-on-selection.directive";
+import { MatCellDefDirective, MatRowDefDirective } from "./mat-cell-def.directive";
+import { NgForDirective } from "./ng-for.directive";
+import { NgLetDirective } from "./ng-let.directive";
+import { TypedTemplateDirective } from "./typed-template.directive";
 
 @NgModule({
   imports: [
@@ -14,6 +18,11 @@ import { PreventClickOnSelectionDirective } from "./prevent-click-on-selection.d
     FormatDirective,
     MatEnhancedTooltipDirective,
     PreventClickOnSelectionDirective,
+    MatCellDefDirective,
+    MatRowDefDirective,
+    NgForDirective,
+    NgLetDirective,
+    TypedTemplateDirective,
   ],
   exports: [
     CommonModule,
@@ -22,6 +31,11 @@ import { PreventClickOnSelectionDirective } from "./prevent-click-on-selection.d
     FormatDirective,
     MatEnhancedTooltipDirective,
     PreventClickOnSelectionDirective,
+    MatCellDefDirective,
+    MatRowDefDirective,
+    NgForDirective,
+    NgLetDirective,
+    TypedTemplateDirective,
   ]
 })
 export class NgxDirectivesModule { }
