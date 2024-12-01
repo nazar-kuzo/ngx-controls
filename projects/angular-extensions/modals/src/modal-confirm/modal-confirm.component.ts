@@ -1,10 +1,14 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, TemplateRef } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
-export interface ModalConfirmSettings {
+export interface ModalConfirmSettings<TContext = any> {
   title: string;
 
   buttons?: { text: string; color?: string; submit?: boolean; value?: any }[];
+
+  template?: TemplateRef<TContext>;
+
+  templateContext?: TContext;
 }
 
 @Component({

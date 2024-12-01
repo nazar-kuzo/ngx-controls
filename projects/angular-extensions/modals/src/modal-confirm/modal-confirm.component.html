@@ -2,7 +2,11 @@
     mat-dialog-title
     [innerHtml]="settings.title | trustedHtml"></h2>
 
-<mat-dialog-actions align="end">
+<mat-dialog-content *ngIf="settings.template">
+  <ng-container *ngTemplateOutlet="settings.template; context: settings.templateContext"></ng-container>
+</mat-dialog-content>
+
+<mat-dialog-actions [align]="'end'">
   <button *ngFor="let button of settings.buttons"
           mat-raised-button
           type="button"
