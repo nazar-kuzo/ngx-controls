@@ -5,7 +5,7 @@
 <form [formGroup]="form.formGroup"
       (ngSubmit)="submit()">
   <mat-dialog-content>
-    <ng-container *ngTemplateOutlet="settings.template || (settings.multiline ? textarea : text)"></ng-container>
+    <ng-container *ngTemplateOutlet="settings.template || (settings.multiline ? textarea : text); context: settings.templateContext"></ng-container>
 
     <ng-template #text>
       <text-control class="d-block"

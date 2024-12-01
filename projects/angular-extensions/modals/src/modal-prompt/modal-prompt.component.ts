@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 import { Field, Form, ValidationConstructor } from "angular-extensions/models";
 
-export interface ModalPromptSettings {
+export interface ModalPromptSettings<TContext = any> {
   title: string;
 
   label?: string;
@@ -13,7 +13,9 @@ export interface ModalPromptSettings {
 
   multiline?: boolean;
 
-  template?: TemplateRef<any>;
+  template?: TemplateRef<TContext>;
+
+  templateContext?: TContext;
 }
 
 @Component({
