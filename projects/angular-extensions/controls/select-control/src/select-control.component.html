@@ -65,7 +65,7 @@
 
               <mat-option *ngFor="let option of group.items; trackBy : optionTracker"
                           [matTooltipDisabled]="optionTooltipDisabled"
-                          [matTooltip]="option | map : field.optionLabel"
+                          [matTooltip]="option | map : field.optionTooltip ?? field.optionLabel"
                           [value]="option | map : field.optionValue"
                           [disabled]="option | map : field.optionDisabled">
                 <ng-container *ngTemplateOutlet="optionTemplate || defaultOptionTempalte;
@@ -92,7 +92,7 @@
             <ng-container *ngIf="!virtualization">
               <mat-option *ngFor="let option of options; trackBy : optionTracker"
                           [matTooltipDisabled]="optionTooltipDisabled"
-                          [matTooltip]="option | map : field.optionLabel"
+                          [matTooltip]="option | map : field.optionTooltip ?? field.optionLabel"
                           [value]="option | map : field.optionValue"
                           [disabled]="option | map : field.optionDisabled">
                 <ng-container *ngTemplateOutlet="optionTemplate || defaultOptionTempalte;

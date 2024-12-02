@@ -347,7 +347,12 @@ export class Field<TValue, TOption = TValue, TOptionGroup = any, TFormattedValue
   public optionLabel: (option: TOption) => string;
 
   /**
-   * Allows to specify option display label when selected or being hovered
+   * Custom option label provider that is used by select-control
+   */
+  public optionTooltip?: (option: TOption) => string;
+
+  /**
+   * Allows to specify option display label when selected
    */
   public optionDisplayLabel?: (option: TOption) => string;
 
