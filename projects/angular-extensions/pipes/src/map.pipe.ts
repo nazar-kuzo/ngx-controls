@@ -9,11 +9,13 @@ export class MapPipe implements PipeTransform {
    * Maps item or collection of items with specified formatter
    *
    * @param value Item or collection of items
-   * @param propertyOrFormatter Item proptery or formatter
+   * @param property Item property or formatter
    * @returns Mapped item or collection of items
    */
-  public transform<T, TResult>(value: T, propertyOrFormatter: keyof T | ((value: T) => TResult)): TResult;
-  public transform<T, TResult>(value: T[], propertyOrFormatter: keyof T | ((value: T) => TResult)): TResult[];
+  public transform<T, TKey extends keyof T>(value: T, property: TKey): T[TKey];
+  public transform<T, TKey extends keyof T>(value: T[], property: TKey): T[TKey][];
+  public transform<T, TResult>(value: T[], formatter: (value: T) => TResult): TResult[];
+  public transform<T, TResult>(value: T, formatter: (value: T) => TResult): TResult;
   public transform<T, TResult>(value: T | T[], propertyOrFormatter: keyof T | ((value: T) => TResult)): TResult | TResult[] {
     let formatter: (value: T) => TResult;
 
