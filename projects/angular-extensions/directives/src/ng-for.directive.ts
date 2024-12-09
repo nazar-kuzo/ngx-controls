@@ -1,6 +1,5 @@
 import { NgFor } from "@angular/common";
-import { Directive, EmbeddedViewRef, Input, OnChanges, TemplateRef, ViewContainerRef } from "@angular/core";
-import { SimpleChanges } from "angular-extensions/core";
+import { Directive, EmbeddedViewRef, Input, OnChanges, Self, TemplateRef, ViewContainerRef } from "@angular/core";
 
 @Directive({
   selector: "[ngFor]"
@@ -8,10 +7,12 @@ import { SimpleChanges } from "angular-extensions/core";
 export class NgForDirective<T> implements OnChanges {
 
   @Input()
-  public ngForOf?: T[];
+  public ngForOf!: T[];
 
   @Input()
-  public ngForTrackByProp?: keyof T;
+  public set ngForTrackByProp(prop: keyof T) {
+    this.ngFor.ngForTrackBy = (_: number, item: T) => item[prop];
+  }
 
   @Input()
   public ngForEmpty?: TemplateRef<unknown>;
@@ -19,22 +20,18 @@ export class NgForDirective<T> implements OnChanges {
   private ngForEmptyViewRef?: EmbeddedViewRef<unknown>;
 
   constructor(
-    private ngFor: NgFor<T>,
+    @Self() private ngFor: NgFor<T>,
     private viewContainerRef: ViewContainerRef,
   ) {
   }
 
-  public ngOnChanges(changes: SimpleChanges<NgForDirective<T>>): void {
-    if (changes.ngForTrackByProp && changes.ngForTrackByProp.currentValue != changes.ngForTrackByProp.previousValue) {
-      this.ngFor.ngForTrackBy = (_, item) => item[this.ngForTrackByProp];
-    }
-
+  public ngOnChanges(): void {
     if (this.ngForEmpty) {
-      if (this.ngForEmptyViewRef && this.ngForOf?.length > 0) {
+      if (this.ngForEmptyViewRef && this.ngForOf.length > 0) {
         this.ngForEmptyViewRef.destroy();
         this.ngForEmptyViewRef = undefined;
       }
-      else if (!this.ngForEmptyViewRef && !this.ngForOf?.length) {
+      else if (!this.ngForEmptyViewRef && !this.ngForOf.length) {
         this.ngForEmptyViewRef = this.viewContainerRef.createEmbeddedView(this.ngForEmpty);
       }
     }
