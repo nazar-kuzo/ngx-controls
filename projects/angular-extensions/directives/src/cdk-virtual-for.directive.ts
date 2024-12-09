@@ -9,7 +9,7 @@ import { CdkVirtualForOf } from "@angular/cdk/scrolling";
 export class CdkVirtualForOfDirective<T> {
 
   @Input()
-  public cdkVirtualForOf?: DataSource<T> | Observable<T[]> | NgIterable<T>;
+  public cdkVirtualForOf?: DataSource<T> | Observable<T[]> | NgIterable<T> | null;
 
   @Input()
   public set cdkVirtualForTrackByProp(prop: keyof T) {

@@ -7,7 +7,7 @@ import { Directive, EmbeddedViewRef, Input, OnChanges, Self, TemplateRef, ViewCo
 export class NgForDirective<T> implements OnChanges {
 
   @Input()
-  public ngForOf?: Iterable<T>;
+  public ngForOf?: Iterable<T> | null;
 
   @Input()
   public set ngForTrackByProp(prop: keyof T) {
