@@ -4,6 +4,7 @@ export * from "./mat-enhanced-tooltip.directive";
 export * from "./prevent-click-on-selection.directive";
 export * from "./mat-cell-def.directive";
 export * from "./ng-for.directive";
+export * from "./cdk-virtual-for.directive";
 export * from "./ng-let.directive";
 export * from "./typed-template.directive";
 export * from "./ngx-directives.module";

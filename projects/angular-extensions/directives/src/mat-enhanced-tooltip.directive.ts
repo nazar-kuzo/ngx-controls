@@ -2,7 +2,7 @@ import { Directive, ElementRef, Input, OnInit, OnDestroy, HostListener } from "@
 import { MatTooltip } from "@angular/material/tooltip";
 
 @Directive({
-  selector: "[matTooltipDisabled],[matTooltipEnabled]",
+  selector: "[matTooltipWhenDisabled],[matTooltipWhenEnabled]",
 })
 export class MatEnhancedTooltipDirective extends MatTooltip implements OnInit, OnDestroy {
 
@@ -10,13 +10,13 @@ export class MatEnhancedTooltipDirective extends MatTooltip implements OnInit, O
    * Tooltip message shown only when element (button, link etc.) is enabled
    */
   @Input()
-  public matTooltipEnabled: string;
+  public matTooltipWhenEnabled: string;
 
   /**
    * Tooltip message shown only when element (button, link etc.) is disabled
    */
   @Input()
-  public matTooltipDisabled: string;
+  public matTooltipWhenDisabled: string;
 
   @Input()
   public override set disabled(disabled: boolean) {
@@ -35,7 +35,7 @@ export class MatEnhancedTooltipDirective extends MatTooltip implements OnInit, O
   }
 
   public override get message() {
-    return this.tooltipDisabled ? this.matTooltipDisabled : this.matTooltipEnabled;
+    return this.tooltipDisabled ? this.matTooltipWhenDisabled : this.matTooltipWhenEnabled;
   }
 
   public override set message(value: string) {

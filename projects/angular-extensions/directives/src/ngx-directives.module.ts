@@ -6,6 +6,7 @@ import { MatEnhancedTooltipDirective } from "./mat-enhanced-tooltip.directive";
 import { PreventClickOnSelectionDirective } from "./prevent-click-on-selection.directive";
 import { MatCellDefDirective, MatRowDefDirective } from "./mat-cell-def.directive";
 import { NgForDirective } from "./ng-for.directive";
+import { CdkVirtualForOfDirective } from "./cdk-virtual-for.directive";
 import { NgLetDirective } from "./ng-let.directive";
 import { TypedTemplateDirective } from "./typed-template.directive";
 
@@ -21,6 +22,7 @@ import { TypedTemplateDirective } from "./typed-template.directive";
     MatCellDefDirective,
     MatRowDefDirective,
     NgForDirective,
+    CdkVirtualForOfDirective,
     NgLetDirective,
     TypedTemplateDirective,
   ],
@@ -34,6 +36,7 @@ import { TypedTemplateDirective } from "./typed-template.directive";
     MatCellDefDirective,
     MatRowDefDirective,
     NgForDirective,
+    CdkVirtualForOfDirective,
     NgLetDirective,
     TypedTemplateDirective,
   ]

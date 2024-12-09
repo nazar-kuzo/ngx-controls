@@ -4,14 +4,15 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { ScrollingModule } from "@angular/cdk/scrolling";
 import { SelectionModel } from "@angular/cdk/collections";
+import { MatPseudoCheckboxModule } from "@angular/material/core";
 import { NgxMatSelectSearchModule } from "ngx-mat-select-search";
 
 import { overrideFunction } from "angular-extensions/core";
+import { NgxDirectivesModule } from "angular-extensions/directives";
 import { NgxBaseControlModule } from "angular-extensions/controls/base-control";
 import { SelectControlComponent } from "./select-control.component";
 import { CustomMatOptionDirective } from "./custom-mat-option.directive";
 import { MatSelectSearchComponentDirective } from "./ngx-mat-select-search.directive";
-import { MatPseudoCheckboxModule } from "@angular/material/core";
 
 interface AppSelectionModel<T> extends Omit<SelectionModel<T>, "_markSelected" | "_unmarkSelected"> {
   _markSelected(value: T): void;
@@ -56,6 +57,7 @@ patchSelectionModel();
     NgxMatSelectSearchModule,
 
     NgxBaseControlModule,
+    NgxDirectivesModule,
   ],
   exports: [
     MatSelectModule,
@@ -65,6 +67,7 @@ patchSelectionModel();
     NgxMatSelectSearchModule,
 
     SelectControlComponent,
+    NgxDirectivesModule,
   ],
   declarations: [
     SelectControlComponent,
