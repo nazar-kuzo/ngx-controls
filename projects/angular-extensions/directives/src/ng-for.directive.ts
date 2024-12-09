@@ -7,7 +7,7 @@ import { Directive, EmbeddedViewRef, Input, OnChanges, Self, TemplateRef, ViewCo
 export class NgForDirective<T> implements OnChanges {
 
   @Input()
-  public ngForOf!: T[];
+  public ngForOf?: Iterable<T>;
 
   @Input()
   public set ngForTrackByProp(prop: keyof T) {
@@ -27,11 +27,11 @@ export class NgForDirective<T> implements OnChanges {
 
   public ngOnChanges(): void {
     if (this.ngForEmpty) {
-      if (this.ngForEmptyViewRef && this.ngForOf.length > 0) {
+      if (this.ngForEmptyViewRef && (this.ngForOf as Array<T>)?.length > 0) {
         this.ngForEmptyViewRef.destroy();
         this.ngForEmptyViewRef = undefined;
       }
-      else if (!this.ngForEmptyViewRef && !this.ngForOf.length) {
+      else if (!this.ngForEmptyViewRef && !(this.ngForOf as Array<T>)?.length) {
         this.ngForEmptyViewRef = this.viewContainerRef.createEmbeddedView(this.ngForEmpty);
       }
     }
