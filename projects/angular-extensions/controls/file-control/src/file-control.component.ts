@@ -6,6 +6,7 @@ import {
 
 import { FilePickerAdapter, FilePickerComponent, FilePreviewModel, FileValidationTypes, ValidationError } from "ngx-awesome-uploader";
 
+import { overrideFunction } from "angular-extensions/core";
 import { ControlBase } from "angular-extensions/controls/base-control";
 import { NoUploadFileService } from "./no-upload-file.service";
 import { FilePickerComponentDirective } from "./ngx-awesome-uploader.directive";
@@ -13,6 +14,27 @@ import { FilePickerComponentDirective } from "./ngx-awesome-uploader.directive";
 export type ValidationErrorMessageTemplate = {
   [key in FileValidationTypes]: (control: FileControlComponent) => string;
 };
+
+overrideFunction(
+  FilePickerComponent.prototype,
+  picker => picker.dropped,
+  async (_, picker, uploadEvent) => {
+    let filesToUpload: File[] = [];
+
+    for (let entry of uploadEvent.files) {
+      let fileEntry = entry.fileEntry as FileSystemFileEntry;
+
+      if (fileEntry.isFile) {
+        let fileToUpload = await new Promise<File>((resolve, reject) => {
+          fileEntry.file(file => resolve(file), error => reject(error));
+        });
+
+        filesToUpload.push(fileToUpload);
+      }
+    }
+
+    picker.handleFiles(filesToUpload).subscribe();
+  });
 
 @Component({
   selector: "file-control",
