@@ -1,3 +1,4 @@
+import { switchMap, takeUntil } from "rxjs";
 import { isEmpty } from "lodash-es";
 import {
   Component, Input, ViewChild, ElementRef, OnInit, ChangeDetectorRef,
@@ -120,6 +121,8 @@ export class FileControlComponent extends ControlBase<File[]> implements OnInit 
   @ViewChild(FilePickerComponent)
   public filePicker: FilePickerComponent;
 
+  private suppressControlEvents = false;
+
   private validationErrorMessages: ValidationErrorMessageTemplate;
 
   constructor(
@@ -150,6 +153,21 @@ export class FileControlComponent extends ControlBase<File[]> implements OnInit 
           this.validationErrorMessages[error as FileValidationTypes] = messageProvider;
         });
     }
+
+    // sync files back with control value
+    this.field$
+      .pipe(
+        switchMap(field => field.control.valueChanges),
+        takeUntil(this.destroy$))
+      .subscribe(files => {
+        if (this.suppressControlEvents) {
+          return;
+        }
+
+        this.filePicker.files = (files || []).map(file => ({ file, fileName: file.name }));
+
+        ((this.filePicker as any).changeRef as ChangeDetectorRef).markForCheck();
+      });
   }
 
   public getOpenFileDialogHandler(fileUploader: FilePickerComponentDirective): () => void {
@@ -189,15 +207,25 @@ export class FileControlComponent extends ControlBase<File[]> implements OnInit 
   }
 
   public onFileAdded(file: FilePreviewModel) {
-    this.field.control.setValue([...(this.field.value || []), file.file as File]);
+    this.suppressControlEventsScope(() =>
+      this.field.control.setValue([...(this.field.value || []), file.file as File]));
 
     this.changeDetectorRef.markForCheck();
   }
 
   public onFileRemoved(removedFile: FilePreviewModel) {
-    this.field.control.setValue(this.field.value.filter(file => file.name != removedFile.fileName));
+    this.suppressControlEventsScope(() =>
+      this.field.control.setValue(this.field.value.filter(file => file.name != removedFile.fileName)));
 
     this.changeDetectorRef.markForCheck();
+  }
+
+  private suppressControlEventsScope(action: () => void) {
+    this.suppressControlEvents = true;
+
+    action();
+
+    this.suppressControlEvents = false;
   }
 
   /**
